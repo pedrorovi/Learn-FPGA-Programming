@@ -31,7 +31,7 @@ module leading_ones
           SW[2]:   LED  = 3;
           SW[1]:   LED  = 2;
           SW[0]:   LED  = 1;
-          //default: LED  = 0;
+          default: LED  = 0;
         endcase
       end // always_comb
     end else if (SELECTOR == "CASE") begin : g_CASE // block: g_UNIQUE_CASE
