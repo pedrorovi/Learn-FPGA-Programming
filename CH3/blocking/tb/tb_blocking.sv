@@ -1,6 +1,6 @@
 `timescale 1ns/10ps
 module tb;
-  parameter BLOCK = "TRUE";
+  parameter BLOCK = "FALSE";
   bit CK;
   bit D;
   bit Q;

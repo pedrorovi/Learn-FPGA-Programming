@@ -7,7 +7,7 @@ module simple_ff
    );
 
   initial begin Q = '1; end
-  always_ff @(posedge CK) Q <= D;
-  //always @(posedge CK) Q <= D;
+  // always_ff @(posedge CK) Q <= D;
+  always @(posedge CK) Q <= D;
 
 endmodule
