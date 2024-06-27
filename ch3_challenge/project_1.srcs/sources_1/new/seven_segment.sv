@@ -2,7 +2,7 @@
 module seven_segment
   #
     (
-      parameter NUM_SEGMENTS = 8,
+      parameter NUM_SEGMENTS = 4,
       parameter CLK_PER      = 10,  // Clock period in ns
       parameter REFR_RATE    = 1000 // Refresh rate in Hz
     )

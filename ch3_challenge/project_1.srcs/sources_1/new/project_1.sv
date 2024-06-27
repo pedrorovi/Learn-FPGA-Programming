@@ -16,12 +16,7 @@ module project_1
       input wire                     BTNR,
       input wire                     BTND,
 
-      output logic signed [BITS-1:0] LED,
-
-      input wire                         CLK,
-      input wire [NUM_SEGMENTS-1:0][3:0] ENCODED,
-      input wire [NUM_SEGMENTS-1:0]      DIGIT_POINT,
-      output logic [7:0]                 CATHODE
+      output logic signed [BITS-1:0] LED
     );
 
   logic [$clog2(BITS):0] LO_LED;
@@ -29,10 +24,6 @@ module project_1
   logic [BITS-1:0]       AD_LED;
   logic [BITS-1:0]       SB_LED;
   logic [BITS-1:0]       MULT_LED;
-
-  logic [NUM_SEGMENTS-1:0][3:0]       encoded;
-  logic [NUM_SEGMENTS-1:0]            digit_point;
-  logic [NUM_SEGMENTS-1:0][7:0]       segments;
 
   leading_ones
     #(.SELECTOR(SELECTOR), .BITS(BITS))
@@ -49,9 +40,21 @@ module project_1
   mult
     #(.BITS(BITS))
     u_mt (.*, .LED(MULT_LED));
-  seven_segment
+
+
+    logic [NUM_SEGMENTS-1:0][3:0]       encoded;
+    logic [NUM_SEGMENTS-1:0]            digit_point;
+  
+    seven_segment
     #(.NUM_SEGMENTS(NUM_SEGMENTS), .CLK_PER(CLK_PER), .REFR_RATE(REFR_RATE))
-    u_7seg (.clk(CLK), .encoded(ENCODED), .digit_point(DIGIT_POINT), .cathode(CATHODE));
+    u_7seg (.clk(clk), .encoded(encoded), .digit_point(digit_point), .anode(anode), .cathode(cathode));
+
+
+  initial
+  begin
+    encoded     = '0;
+    digit_point = '1;
+  end
 
   //always_latch begin
   always_comb
