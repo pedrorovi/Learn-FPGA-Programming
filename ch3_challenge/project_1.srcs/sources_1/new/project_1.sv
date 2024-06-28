@@ -16,7 +16,14 @@ module project_1
       input wire                     BTNR,
       input wire                     BTND,
 
-      output logic signed [BITS-1:0] LED
+
+      output logic signed [BITS-1:0] LED,
+
+
+      input wire                      clk,
+
+      output logic [NUM_SEGMENTS-1:0] anode,
+      output logic [6:0]              cathode
     );
 
   logic [$clog2(BITS):0] LO_LED;
@@ -42,10 +49,10 @@ module project_1
     u_mt (.*, .LED(MULT_LED));
 
 
-    logic [NUM_SEGMENTS-1:0][3:0]       encoded;
-    logic [NUM_SEGMENTS-1:0]            digit_point;
-  
-    seven_segment
+  logic [NUM_SEGMENTS-1:0][3:0]       encoded;
+  logic [NUM_SEGMENTS-1:0]            digit_point;
+
+  seven_segment
     #(.NUM_SEGMENTS(NUM_SEGMENTS), .CLK_PER(CLK_PER), .REFR_RATE(REFR_RATE))
     u_7seg (.clk(clk), .encoded(encoded), .digit_point(digit_point), .anode(anode), .cathode(cathode));
 
