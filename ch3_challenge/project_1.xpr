@@ -147,7 +147,7 @@
         <Option Name="TopAutoSet" Val="TRUE"/>
         <Generic Name="SELECTOR" Val="ADD"/>
         <Generic Name="ASYNC_BUTTON" Val="DEBOUNCE"/>
-        <Generic Name="MODE" Val="HEX"/>
+        <Generic Name="MODE" Val="DEC"/>
       </Config>
     </FileSet>
     <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1" RelGenDir="$PGENDIR/constrs_1">

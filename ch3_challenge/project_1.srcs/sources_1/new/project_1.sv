@@ -6,7 +6,8 @@ module project_1
       parameter BITS         = 16,
       parameter NUM_SEGMENTS = 4,
       parameter CLK_PER      = 10,  // Clock period in ns
-      parameter REFR_RATE    = 1000 // Refresh rate in Hz
+      parameter REFR_RATE    = 1000, // Refresh rate in Hz
+      parameter MODE         = "DEC" // or "DEC"
     )
     (
       input wire [BITS-1:0]          SW,
@@ -67,32 +68,80 @@ module project_1
   always_comb
   begin
     LED = '0;
+    encoded = copy_led_to_encoded(LED, MODE);
     case (1'b1)
       BTNC:
       begin
         LED  = MULT_LED;
-        // ENCODED = MULT_LED;
+        encoded = copy_led_to_encoded(LED, MODE);
       end
       BTNU:
       begin
         LED  = LO_LED;
-        // ENCODED = LO_LED;
+        encoded = copy_led_to_encoded(LED, MODE);
       end
       BTND:
       begin
         LED  = NO_LED;
-        // ENCODED = NO_LED;
+        encoded = copy_led_to_encoded(LED, MODE);
       end
       BTNL:
       begin
         LED  = AD_LED;
-        // ENCODED = AD_LED;
+        encoded = copy_led_to_encoded(LED, MODE);
       end
       BTNR:
       begin
         LED  = SB_LED;
-        // ENCODED = SB_LED;
+        encoded = copy_led_to_encoded(LED, MODE);
       end
     endcase
   end
+
+  function  logic [NUM_SEGMENTS-1:0][3:0] copy_led_to_encoded(input logic [15:0] LED, input string mode);
+    logic [NUM_SEGMENTS-1:0][3:0] din;
+    int i, j; // Declare loop variables
+    bit [3:0]                     next_val;
+    bit                           carry_in;
+
+    if (mode == "HEX")
+    begin
+      for (int i = 0; i < NUM_SEGMENTS; i++)
+      begin
+        for (int j = 0; j < NUM_SEGMENTS; j++)
+        begin
+          din[i][j] = LED[(i * NUM_SEGMENTS) + j];
+        end
+      end
+    end
+    else if (mode == "DEC")
+    begin
+      for (int i = 0; i < NUM_SEGMENTS; i++)
+      begin
+        for (int j = 0; j < NUM_SEGMENTS; j++)
+        begin
+          din[i][j] = LED[(i * NUM_SEGMENTS) + j];
+        end
+      end
+
+      carry_in = '1;
+      for (int i = 0; i < NUM_SEGMENTS; i++)
+      begin
+        next_val = din[i] + carry_in;
+        if (next_val > 9)
+        begin
+          copy_led_to_encoded[i] = '0;
+          carry_in   = '1;
+        end
+        else
+        begin
+          copy_led_to_encoded[i] = next_val;
+          carry_in   = '0;
+        end
+      end // for (int i = 0; i < NUM_SEGMENTS; i++)
+
+    end
+
+    return din;
+  endfunction
 endmodule
