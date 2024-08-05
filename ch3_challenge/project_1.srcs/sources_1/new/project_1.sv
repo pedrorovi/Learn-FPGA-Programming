@@ -99,53 +99,10 @@ module project_1
   end
 
 
-  function logic [6:0] hexto7segment(input [3:0] x);
-    logic [6:0] z;
-    begin
-      case (x)
-        4'b0000:
-          z = 7'b1111110; // Hexadecimal 0
-        4'b0001:
-          z = 7'b0110000; // Hexadecimal 1
-        4'b0010:
-          z = 7'b1101101; // Hexadecimal 2
-        4'b0011:
-          z = 7'b1111001; // Hexadecimal 3
-        4'b0100:
-          z = 7'b0110011; // Hexadecimal 4
-        4'b0101:
-          z = 7'b1011011; // Hexadecimal 5
-        4'b0110:
-          z = 7'b1011111; // Hexadecimal 6
-        4'b0111:
-          z = 7'b1110000; // Hexadecimal 7
-        4'b1000:
-          z = 7'b1111111; // Hexadecimal 8
-        4'b1001:
-          z = 7'b1111011; // Hexadecimal 9
-        4'b1010:
-          z = 7'b1110111; // Hexadecimal A
-        4'b1011:
-          z = 7'b0011111; // Hexadecimal B
-        4'b1100:
-          z = 7'b1001110; // Hexadecimal C
-        4'b1101:
-          z = 7'b0111101; // Hexadecimal D
-        4'b1110:
-          z = 7'b1001111; // Hexadecimal E
-        4'b1111:
-          z = 7'b1000111; // Hexadecimal F
-        default:
-          z = 7'b0000000; // Default case
-      endcase
-      hexto7segment = z; // Assign the result to the function name
-    end
-  endfunction
-
-
   function logic [NUM_SEGMENTS-1:0][3:0] copy_led_to_encoded(input logic [15:0] LED, input string mode);
     logic [NUM_SEGMENTS-1:0][3:0] din;
     int i, j; // Declare loop variables
+    int sum;
     bit [3:0] next_val;
     bit carry_in;
 
@@ -154,15 +111,31 @@ module project_1
       for (i = 0; i < NUM_SEGMENTS; i++)
       begin
         din[i] = LED[i * 4 +: 4]; // Assuming each segment is 4 bits
+        // sum += din[i];
       end
     end
     else if (mode == "DEC")
     begin
       for (i = 0; i < NUM_SEGMENTS; i++)
       begin
-        din[i] = hexto7segment(LED[i * 4 +: 4]);
+        sum += LED[i * 4 +: 4] << i * 4;
       end
+
+      din[0] = sum % 10;            // digit 0, ones place
+      din[1] = (sum / 10) % 10;     // digit 1, tens place
+      din[2] = (sum / 100) % 10;   // digit 2, hundreds place
+      din[3] = (sum / 1000) % 10; // digit 3, thousands place
+
     end
+
+    // begin
+    //   for (i = 0; i < NUM_SEGMENTS; i++)
+    //   begin
+    //     next_val = sum % 10;
+    //     sum /= 10;
+    //     din[i] = next_val;
+    //   end
+    // end
 
     return din;
   endfunction
