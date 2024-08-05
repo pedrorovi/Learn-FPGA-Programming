@@ -98,50 +98,74 @@ module project_1
     endcase
   end
 
-  function  logic [NUM_SEGMENTS-1:0][3:0] copy_led_to_encoded(input logic [15:0] LED, input string mode);
+
+  function logic [6:0] hexto7segment(input [3:0] x);
+    logic [6:0] z;
+    begin
+      case (x)
+        4'b0000:
+          z = 7'b1111110; // Hexadecimal 0
+        4'b0001:
+          z = 7'b0110000; // Hexadecimal 1
+        4'b0010:
+          z = 7'b1101101; // Hexadecimal 2
+        4'b0011:
+          z = 7'b1111001; // Hexadecimal 3
+        4'b0100:
+          z = 7'b0110011; // Hexadecimal 4
+        4'b0101:
+          z = 7'b1011011; // Hexadecimal 5
+        4'b0110:
+          z = 7'b1011111; // Hexadecimal 6
+        4'b0111:
+          z = 7'b1110000; // Hexadecimal 7
+        4'b1000:
+          z = 7'b1111111; // Hexadecimal 8
+        4'b1001:
+          z = 7'b1111011; // Hexadecimal 9
+        4'b1010:
+          z = 7'b1110111; // Hexadecimal A
+        4'b1011:
+          z = 7'b0011111; // Hexadecimal B
+        4'b1100:
+          z = 7'b1001110; // Hexadecimal C
+        4'b1101:
+          z = 7'b0111101; // Hexadecimal D
+        4'b1110:
+          z = 7'b1001111; // Hexadecimal E
+        4'b1111:
+          z = 7'b1000111; // Hexadecimal F
+        default:
+          z = 7'b0000000; // Default case
+      endcase
+      hexto7segment = z; // Assign the result to the function name
+    end
+  endfunction
+
+
+  function logic [NUM_SEGMENTS-1:0][3:0] copy_led_to_encoded(input logic [15:0] LED, input string mode);
     logic [NUM_SEGMENTS-1:0][3:0] din;
     int i, j; // Declare loop variables
-    bit [3:0]                     next_val;
-    bit                           carry_in;
+    bit [3:0] next_val;
+    bit carry_in;
 
     if (mode == "HEX")
     begin
-      for (int i = 0; i < NUM_SEGMENTS; i++)
+      for (i = 0; i < NUM_SEGMENTS; i++)
       begin
-        for (int j = 0; j < NUM_SEGMENTS; j++)
-        begin
-          din[i][j] = LED[(i * NUM_SEGMENTS) + j];
-        end
+        din[i] = LED[i * 4 +: 4]; // Assuming each segment is 4 bits
       end
     end
     else if (mode == "DEC")
     begin
-      for (int i = 0; i < NUM_SEGMENTS; i++)
+      for (i = 0; i < NUM_SEGMENTS; i++)
       begin
-        for (int j = 0; j < NUM_SEGMENTS; j++)
-        begin
-          din[i][j] = LED[(i * NUM_SEGMENTS) + j];
-        end
+        din[i] = hexto7segment(LED[i * 4 +: 4]);
       end
-
-      carry_in = '1;
-      for (int i = 0; i < NUM_SEGMENTS; i++)
-      begin
-        next_val = din[i] + carry_in;
-        if (next_val > 9)
-        begin
-          copy_led_to_encoded[i] = '0;
-          carry_in   = '1;
-        end
-        else
-        begin
-          copy_led_to_encoded[i] = next_val;
-          carry_in   = '0;
-        end
-      end // for (int i = 0; i < NUM_SEGMENTS; i++)
-
     end
 
     return din;
   endfunction
+
+
 endmodule
